@@ -1,7 +1,54 @@
-let a = [2, 5, 8, 2, 5, 7, 2];
+const fs = require('fs');
+const path = require('path');
+// const axios = require('axios');
+const http = require('http');
 
-const { sort } = require('fast-sort');
+// fs.writeFile('1.txt', 'Hello !', 'utf-8', (err) => {
+//     if (err) {
+//         throw err;
+//     }
 
-const ascSorted = sort(a).desc();
+//     console.log(`Done!`);
+// })
 
-console.log(ascSorted);
+// fs.readFile(path.resolve(__dirname, '1.txt'), 'utf-8', (err, data) => {
+//     if (err) {
+//         throw err;
+//     }
+
+//     console.log(data);
+// })
+
+// ;(async () => {
+//     const { data } = await axios.get('https://jsonplaceholder.typicode.com/posts');
+
+
+//     fs.writeFile(path.resolve(__dirname, '1.json'), JSON.stringify(data), 'utf-8', (err) => {
+//         if (err) {
+//             throw err;
+//         }
+
+//         console.log(`Done!`);
+//     })
+// })();
+
+http
+    .createServer((request, response) => {
+        response
+            .setHeader("Content-Type", "text/html; charset=utf-8;");
+
+            if (request.url === '/') {
+                response.write('Мы в корне!');
+                response.end();
+            } else if (request.url === '/json') {
+                fs.readFile(path.resolve(__dirname, '1.txt'), 'utf-8', (err, data) => {
+                    if (err) {
+                        throw err;
+                    }
+
+                    response.write(data);
+                    response.end();
+                })
+            }
+    })
+    .listen(3000);
