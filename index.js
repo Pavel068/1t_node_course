@@ -1,54 +1,21 @@
-const fs = require('fs');
-const path = require('path');
-// const axios = require('axios');
-const http = require('http');
+const mysql = require('mysql2');
 
-// fs.writeFile('1.txt', 'Hello !', 'utf-8', (err) => {
-//     if (err) {
-//         throw err;
-//     }
+const connection = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: 'yahz',
+    database: 'social_network'
+});
 
-//     console.log(`Done!`);
-// })
+connection.query(
+    'SELECT * FROM users WHERE balance > ?',
+    [0],
+    function(err, results) {
+      console.log(results);
+    }
+);
 
-// fs.readFile(path.resolve(__dirname, '1.txt'), 'utf-8', (err, data) => {
-//     if (err) {
-//         throw err;
-//     }
-
-//     console.log(data);
-// })
-
-// ;(async () => {
-//     const { data } = await axios.get('https://jsonplaceholder.typicode.com/posts');
-
-
-//     fs.writeFile(path.resolve(__dirname, '1.json'), JSON.stringify(data), 'utf-8', (err) => {
-//         if (err) {
-//             throw err;
-//         }
-
-//         console.log(`Done!`);
-//     })
-// })();
-
-http
-    .createServer((request, response) => {
-        response
-            .setHeader("Content-Type", "text/html; charset=utf-8;");
-
-            if (request.url === '/') {
-                response.write('Мы в корне!');
-                response.end();
-            } else if (request.url === '/json') {
-                fs.readFile(path.resolve(__dirname, '1.txt'), 'utf-8', (err, data) => {
-                    if (err) {
-                        throw err;
-                    }
-
-                    response.write(data);
-                    response.end();
-                })
-            }
-    })
-    .listen(3000);
+const post  = {title: 'Hello MySQL', body: 'avsdvsdvsdv', author_id: 1};
+const query = connection.query('INSERT INTO posts SET ?', post, function (error, results, fields) {
+  if (error) throw error;
+});
