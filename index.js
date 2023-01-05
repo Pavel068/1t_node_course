@@ -1,21 +1,76 @@
-const mysql = require('mysql2');
+const { Sequelize, DataTypes } = require('sequelize');
 
-const connection = mysql.createConnection({
+const sequelize = new Sequelize('social_network', 'root', 'yahz', {
     host: 'localhost',
-    user: 'root',
-    password: 'yahz',
-    database: 'social_network'
+    dialect: 'mysql'
 });
 
-connection.query(
-    'SELECT * FROM users WHERE balance > ?',
-    [0],
-    function(err, results) {
-      console.log(results);
+const User = sequelize.define('User', {
+    // Model attributes are defined here
+    id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        primaryKey: true,
+        autoIncrement: true
+    },
+    email: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true
+    },
+    password: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    first_name: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    last_name: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    photo_id: {
+        type: DataTypes.INTEGER,
+        allowNull: true
+    },
+    birthday: {
+        type: DataTypes.DATE,
+        allowNull: true
+    },
+    country: {
+        type: DataTypes.STRING,
+        allowNull: true
+    },
+    city: {
+        type: DataTypes.STRING,
+        allowNull: true
+    },
+    gender: {
+        type: DataTypes.ENUM(['male', 'female']),
+        allowNull: true
+    },
+    balance: {
+        type: DataTypes.FLOAT,
+        allowNull: true,
+        defaultValue: 0
+    },
+}, {
+    // Other model options go here
+    tableName: 'users',
+    timestamps: false
+});
+
+; (async () => {
+    try {
+        await User.sync({
+            alter: true,
+            force: false
+        });
+
+        const user = await User.findByPk(1);
+        user.destroy();
+    } catch (error) {
+        console.error(error);
     }
-);
-
-const post  = {title: 'Hello MySQL', body: 'avsdvsdvsdv', author_id: 1};
-const query = connection.query('INSERT INTO posts SET ?', post, function (error, results, fields) {
-  if (error) throw error;
-});
+})();
