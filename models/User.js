@@ -1,9 +1,6 @@
-const { Sequelize, DataTypes } = require('sequelize');
-
-const sequelize = new Sequelize('social_network', 'root', 'yahz', {
-    host: 'localhost',
-    dialect: 'mysql'
-});
+const path = require('path');
+const { sequelize } = require('../DB');
+const { DataTypes } = require('sequelize');
 
 const User = sequelize.define('User', {
     // Model attributes are defined here
@@ -61,16 +58,4 @@ const User = sequelize.define('User', {
     timestamps: false
 });
 
-; (async () => {
-    try {
-        await User.sync({
-            alter: true,
-            force: false
-        });
-
-        const user = await User.findByPk(1);
-        user.destroy();
-    } catch (error) {
-        console.error(error);
-    }
-})();
+module.exports = { User }
