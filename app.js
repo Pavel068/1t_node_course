@@ -1,71 +1,117 @@
-const express = require('express');
-const app = express();
-const port = 3000;
+// ====================== Closure (Замыкание)
 
-app.use(express.json());
+// function increment(initial = 0) {
+//     let counter = initial;
+//     return function () {
+//         return ++counter;
+//     }
+// }
 
-const { User } = require('./models/User');
+// const i = increment(5);
+// console.log(i());
+// console.log(i());
+// console.log(i());
+// console.log(i());
+// console.log(i());
 
-app.get('/users', async (req, res) => {
-    const users = await User.findAll({});
-    return res.status(200).json({
-        data: users,
-        meta: {
-            page: 1,
-            per_page: 10,
-            totalItems: users.length
-        }
-    });
-});
+// ====================== Таймеры
+// console.log(1);
 
-app.get('/users/:id', async (req, res) => {
-    const user = await User.findByPk(req.params.id);
-    return res.status(200).json(user);
-});
+// setTimeout(() => {
+//     console.log(`Выполнится после 3с`);
+// }, 3000);
 
-app.post('/users', async (req, res) => {
-    try {
-        const user = await User.create(req.body);
-        await user.reload();
-        return res.status(201).json(user);
-    } catch (e) {
-        return res.json(e);
-    }
-});
+// console.log(2);
 
-app.patch('/users/:id', async (req, res) => {
-    try {
-        const user = await User.findByPk(req.params.id);
-        if (user) {
-            user.first_name = req.body.first_name;
-            user.last_name = req.body.last_name;
-        }
-    
-        await user.save();
-    
-        return res.status(200).json(user);
-    }  catch (e) {
-        return res.json(e);
-    }
-});
+// let a = setInterval(() => {
+//     console.log(123);
+// }, 2000);
 
-app.delete('/users/:id', async (req, res) => {
-    try {
-        const user = await User.findByPk(req.params.id);
-        await user.destroy();
-        return res.status(204).json();
-    } catch (e) {
-        return res.json(e);
-    }
-});
+// setImmediate(() => {
+//     console.log(`Immediate`);
+// });
 
-app.listen(port, async () => {
-    try {
-        await User.sync({
-            alter: true,
-            force: false
-        });
-    } catch (error) {
-        console.error(error);
-    }
-});
+// process.nextTick(() => {
+//     console.log('Next tick');
+// });
+
+// setTimeout(() => {
+//     clearInterval(a);
+// }, 12000);
+
+// ====================== Колбек
+
+// function heavyOperation(limit, cb) {
+//     queueMicrotask(() => {
+//         let counter = 0;
+//         for (i = 0; i < limit; i++) {
+//             for (j = 0; j < limit; j++) {
+//                 counter = j;
+//             }
+//         }
+//         cb();
+//     });
+// }
+
+// console.log('Operation 1');
+// heavyOperation(20000, () => {
+//     console.log('Heavy function complete!');
+// })
+// console.log('Operation 2');
+
+// ====================== Promise
+
+// function heavyOperationPromise(limit) {
+//     return new Promise((resolve, reject) => {
+//         heavyOperation(limit, () => {
+//             resolve('Heavy operation complete');
+//         })
+//     });
+// }
+
+// console.log('Operation 1');
+// heavyOperationPromise(20000).then(response => {
+//     console.log(response);
+// }).catch(err => {console.error(err);})
+// console.log('Operation 2');
+
+
+// ====================== Async / Await
+
+// ;(async () => {
+//     console.log('Operation 1');
+//     console.log(await heavyOperationPromise(20000));
+//     console.log('Operation 2');
+// })();
+
+
+// ====================== try ... catch
+
+// try {
+//     console.log(a + b);
+// } catch (e) {
+//     console.error(`Произошла ошибка`);
+//     throw e;
+// } finally {
+//     console.log('Блок будет выполнен');
+// }
+
+
+// const task = async () => {
+//     try {
+//         op(1);
+//         op(2);
+//         op(3);
+//         return result;
+//     } catch (e) {
+//         throw e;
+//     }
+// }
+// app.get('/', async (req, res) => {
+//     try {
+//        await task();
+//     } catch (e) {
+//         console.error(e);
+//         return res.status(400).send('error');
+//     }
+// })
