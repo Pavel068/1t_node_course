@@ -20,9 +20,11 @@ class ChatService {
 
     async getMessages(room_id = null) {
         try {
-            filter = {};
+            const filter = {};
             if (room_id) {
                 filter.room_id = room_id;
+            } else {
+                filter.room_id = null;
             }
 
             const messages = Chat.findAll({

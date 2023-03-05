@@ -5,7 +5,7 @@
         <p>Чат</p>
         <div class="chat-history">
           <div class="chat-history-item" v-for="message in messages">
-            <p><b>{{ message.name }}</b></p>
+            <h3>{{ message.name }}</h3>
             <p>{{ message.message }}</p>
           </div>
         </div>
@@ -21,9 +21,9 @@
       <div class="rooms">
         <p>Комнаты</p>
         <div class="rooms-list">
-            <div class="rooms_list_item" v-for="room in rooms">
-                <p @click="joinRoom(room.id)">{{ room.name }}</p>
-            </div>
+          <div class="rooms-list-item" v-for="room in rooms">
+            <p @click="joinRoom(room.id)" :style="room.id === room_id ? 'text-decoration: underline' : ''">{{ room.name }}</p>
+          </div>
         </div>
         <p>Создать комнату</p>
         <div>
@@ -50,6 +50,10 @@
   height: 300px;
   background-color: #f5f5f5;
   overflow-y: scroll;
+}
+
+.rooms-list-item>p {
+  cursor: pointer;
 }
 
 .chat-history-item {
@@ -83,10 +87,10 @@ export default {
       this.creating_room = null;
     },
     joinRoom(room_id) {
-      if (this.room_id) {
-        socket.emit('leave_room', {room_id: this.room_id});
-      }
-      
+      socket.emit('leave_room', { room_id: this.room_id });
+
+      this.room_id = room_id; 
+      socket.emit('join_room', { room_id: this.room_id });
     },
     sendMessage() {
       const message = {
@@ -96,24 +100,28 @@ export default {
       }
 
       socket.emit('message', message);
-
-      this.messages.push(message);
-
       this.message = null;
     }
   },
   mounted() {
-    socket.on('connect_error', (data) => {
-      console.error(data);
+    socket.on('connect_error', error => {
+      console.error(error);
+    });
+
+    socket.on('history', data => {
+      this.messages = data;
+    });
+
+    socket.on('get-rooms', data => {
+      this.rooms = data;
     })
 
-    socket.on('history', data => {});
     socket.on('rooms_list_changed', data => {
-      console.log(data);
+      this.rooms.push(data);
     });
 
     socket.on('message', data => {
-      this.messages.push(data);
+      this.messages.unshift(data);
     });
   }
 }
