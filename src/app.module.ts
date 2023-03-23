@@ -11,8 +11,6 @@ import { Post } from './posts/entities/post.entity';
 import { UsersModule } from './users/users.module';
 import { User } from './users/entities/user.entity';
 import { AuthModule } from './auth/auth.module';
-import { ModerationModule } from './moderation/moderation.module';
-import { BullModule } from '@nestjs/bull';
 
 @Module({
   imports: [
@@ -27,17 +25,10 @@ import { BullModule } from '@nestjs/bull';
       entities: [Category, Post, User],
       synchronize: true,
     }),
-    BullModule.forRoot({
-      redis: {
-        host: 'localhost',
-        port: 6379,
-      },
-    }),
     CategoryModule, 
     PostsModule,
     UsersModule,
-    AuthModule,
-    ModerationModule
+    AuthModule
   ],
   controllers: [AppController],
   providers: [AppService],
